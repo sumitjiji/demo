@@ -10,13 +10,16 @@ st.set_page_config(page_title="Form Auto‑Fill Demo", layout="centered")
 st.markdown("""
 <h1 style="text-align:center;">📝 Form Auto‑Fill (Education Only)</h1>
 <p style="text-align:center;">
-Parse a Google Form, set percentage distributions, and auto‑fill fake responses.<br>
-<b>Do not use this to cheat or spam real forms.</b>
+Paste a Google Form link, set percentage distributions, and auto‑fill fake responses.<br>
+<b>Do not misuse for cheating or spamming real forms.</b>
 </p>
 """, unsafe_allow_html=True)
 
 # 1. URL input
-form_url = st.text_input("1. Paste Google Form URL (viewform link)", placeholder="https://docs.google.com/forms/d/e/.../viewform")
+form_url = st.text_input(
+    "1. Paste Google Form URL (viewform link)",
+    placeholder="https://docs.google.com/forms/d/e/.../viewform"
+)
 if not form_url:
     st.stop()
 
@@ -31,9 +34,8 @@ def parse_form(url):
             return None
 
         soup = BeautifulSoup(page.content, "html.parser")
-        script_tags = soup.find_all("script")
         script_text = None
-        for script in script_tags:
+        for script in soup.find_all("script"):
             if "FB_PUBLIC_LOAD_DATA_" in script.text:
                 script_text = script.text
                 break
@@ -169,16 +171,14 @@ def submit_response(form_url, answers):
 
 # 7. Generate & auto‑fill button
 if st.button("🚀 Generate & Auto‑Fill Responses"):
-    if num_responses <= 0:
-        st.error("Number of responses must be greater than 0.")
-    else:
-        progress = st.empty()
-        success = 0  # ✅ FIXED: Initialize success variable
-        
-        for i in range(num_responses):
-            answers = sample_response(questions, dist)
-            if submit_response(form_url, answers):
-                success += 1
-            progress.text(f"📆 Done {i+1}/{num_responses} responses; success {success}")
-        
-        st.success(f"✅ Simulation finished. {success}/{num_responses} submissions succeeded.")
+    progress = st.empty()
+    success = 0
+    for i in range(num_responses):
+        answers = sample_response(questions, dist)
+        if submit_response(form_url, answers):
+            success += 1
+        progress.text(f"📆 Done {i+1}/{num_responses} responses; success {success}")
+    st.success(f"✅ Simulation finished. {success}/{num_responses} submissions succeeded.")
+streamlit==1.38.0
+requests==2.31.0
+beautifulsoup4==4.12.0
