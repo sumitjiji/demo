@@ -169,11 +169,16 @@ def submit_response(form_url, answers):
 
 # 7. Generate & auto‑fill button
 if st.button("🚀 Generate & Auto‑Fill Responses"):
-    progress = st.empty()
-    success = 0
-    for i in range(num_responses):
-        answers = sample_response(questions, dist)
-        if submit_response(form_url, answers):
-            success += 1
-        progress.text(f"📆 Done {i+1}/{num_responses} responses; success {success}")
-    st.success(f"✅ Simulation finished. {success}/{num_responses} submissions succeeded.")
+    if num_responses <= 0:
+        st.error("Number of responses must be greater than 0.")
+    else:
+        progress = st.empty()
+        success = 0  # ✅ FIXED: Initialize success variable
+        
+        for i in range(num_responses):
+            answers = sample_response(questions, dist)
+            if submit_response(form_url, answers):
+                success += 1
+            progress.text(f"📆 Done {i+1}/{num_responses} responses; success {success}")
+        
+        st.success(f"✅ Simulation finished. {success}/{num_responses} submissions succeeded.")
